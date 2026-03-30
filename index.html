@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ETD Takip Sistemi | Havaalanı Güvenlik</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --sidebar: #0f172a;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --text: #1e293b;
+            --accent: #38bdf8;
+        }
+
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Giriş Ekranı */
+        #loginScreen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--sidebar);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-box {
+            background: white;
+            padding: 40px;
+            border-radius: 20px;
+            width: 320px;
+            text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+        }
+
+        /* Menü ve İçerik */
+        .sidebar {
+            width: 350px;
+            background: var(--sidebar);
+            color: white;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+
+        .sidebar h2 {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: var(--accent);
+            display: flex; align-items: center; gap: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 15px;
+        }
+
+        .device-btn {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.08);
+            color: #94a3b8;
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: left;
+            margin-bottom: 6px;
+            display: flex; align-items: center; gap: 10px; font-size: 0.8rem;
+        }
+
+        .device-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+        }
+
+        .main-content {
+            flex: 1; padding: 25px; overflow-y: auto;
+            display: grid; grid-template-columns: 1fr 400px; gap: 25px;
+        }
+
+        .log-card {
+            background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px;
+            border-left: 5px solid var(--primary); display: flex; justify-content: space-between;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+        }
+
+        .form-container {
+            background: white; padding: 25px; border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); height: fit-content; position: sticky; top: 0;
+        }
+
+        input, select, textarea {
+            width: 100%; padding: 12px; margin: 8px 0 15px 0;
+            border: 1.5px solid #f1f5f9; border-radius: 8px; background: #f8fafc; box-sizing: border-box;
+        }
+
+        .btn {
+            width: 100%; padding: 14px; border: none; border-radius: 8px;
+            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+
+        .btn-blue { background: var(--primary); color: white; }
+        .btn-green { background: #10b981; color: white; width: auto; padding: 0 20px; }
+        .btn-sync { background: #6366f1; color: white; margin-bottom: 15px; font-size: 0.8rem; padding: 10px; }
+
+        @media print {
+            .sidebar, .form-container, .filter-box, .btn, #loginScreen { display: none !important; }
+            .main-content { display: block; }
+            .log-card { border: 1px solid #eee; break-inside: avoid; }
+        }
+
+        @media (max-width: 1200px) {
+            body { flex-direction: column; overflow: auto; }
+            .sidebar { width: 100%; height: auto; }
+            .main-content { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="loginScreen">
+    <div class="login-box">
+        <span class="material-icons-round" style="font-size:48px; color:var(--primary);">security</span>
+        <h2 style="color:var(--sidebar); margin-top:10px;">ETD Sisteme Giriş</h2>
+        <input type="text" id="user" placeholder="Kullanıcı Adı">
+        <input type="password" id="pass" placeholder="Şifre">
+        <button class="btn btn-blue" onclick="checkLogin()">Giriş Yap</button>
+        <p id="loginErr" style="color:red; display:none; margin-top:10px; font-size:0.8rem;">Hatalı Giriş!</p>
+    </div>
+</div>
+
+<div class="sidebar">
+    <h2><span class="material-icons-round">biotech</span> ETD Cihaz Listesi</h2>
+    <button class="btn btn-sync" onclick="refreshData()">
+        <span class="material-icons-round">sync</span> Verileri Güncelle
+    </button>
+    <div id="deviceMenu"></div>
+</div>
+
+<div class="main-content">
+    <div>
+        <h3 id="deviceTitle">Cihaz Seçin</h3>
+        <div class="filter-box" style="margin-bottom:20px; display:flex; gap:10px;">
+            <input type="date" id="filterDate" style="margin:0;">
+            <button class="btn btn-blue" style="width:auto" onclick="filterData()">Filtrele</button>
+            <button class="btn btn-green" onclick="window.print()">Rapor Al</button>
+        </div>
+        <div id="logList"></div>
+    </div>
+
+    <div class="form-container">
+        <h3>Yeni Bakım Kaydı</h3>
+        <label>Teknisyen</label>
+        <input type="text" id="tech" placeholder="Ad Soyad">
+        
+        <label>Yapılan İşlem</label>
+        <textarea id="op" rows="4" placeholder="Detaylar..."></textarea>
+        
+        <label>Sonuç</label>
+        <select id="res">
+            <option>Faal / Arıza Giderildi</option>
+            <option>Lamba Değişimi Yapıldı</option>
+            <option>Çelik Filtre Değişimi yapıldı</option>
+            <option>İnlet Filtre Değişimi Yapıldı </option>
+            <option>Parça Bekliyor</option>
+            <option>Arızalı</option>
+        </select>
+
+        <button class="btn btn-blue" id="saveBtn" onclick="saveData()">
+            <span class="material-icons-round">send</span> Buluta Kaydet
+        </button>
+        <p id="msg" style="display:none; color:green; text-align:center; margin-top:10px;">İşlem Başarılı!</p>
+    </div>
+</div>
+
+<script>
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyKMEZ1dxtJedFv_gBOm9y3lq_mCvPfD72NhNa2oTHo4LwtASZV8SzUJM7Zfu4MyFJsPg/exec";
+
+    const devices = [
+        "İç hat arındırılmış 1 iz dedektörü (xxxxxxxx)",
+        "İç hat arındırılmış 2 iz dedektörü (xxxxxxxx)",
+        "İç hat arındırılmış 3 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 1 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 2 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 3 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 4 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 5 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış 6 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış engelli iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış transit 1 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış transit 2 iz dedektörü (xxxxxxxx)",
+        "Dış hat arındırılmış transit 3 iz dedektörü (xxxxxxxx)"
+    ];
+
+    let currentIdx = 0;
+    let logs = [];
+
+    // Şifre Kontrolü
+    function checkLogin() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if(u === "admin" && p === "1234") {
+            document.getElementById('loginScreen').style.display = "none";
+            refreshData();
+        } else {
+            document.getElementById('loginErr').style.display = "block";
+        }
+    }
+
+    // Menü Oluştur
+    const menu = document.getElementById('deviceMenu');
+    devices.forEach((d, i) => {
+        menu.innerHTML += `<button class="device-btn" id="b-${i}" onclick="loadDevice(${i})">
+            <span class="material-icons-round">radar</span> ${d}</button>`;
+    });
+
+    async function refreshData() {
+        const btn = document.querySelector('.btn-sync');
+        btn.innerText = 'Güncelleniyor...';
+        try {
+            const response = await fetch(GOOGLE_URL + "?action=read");
+            const data = await response.json();
+            logs = data.map(item => ({
+                id: devices.indexOf(item.cihaz),
+                tech: item.teknisyen,
+                op: item.islem,
+                res: item.sonuc,
+                date: item.tarih,
+                time: item.saat
+            }));
+            showLogs();
+            btn.innerText = 'Veriler Güncel';
+        } catch (e) {
+            btn.innerText = 'Hata: Bağlantı Yok';
+        }
+    }
+
+    function loadDevice(i) {
+        currentIdx = i;
+        document.querySelectorAll('.device-btn').forEach(btn => btn.classList.remove('active'));
+        document.getElementById('b-'+i).classList.add('active');
+        document.getElementById('deviceTitle').innerText = devices[i];
+        showLogs();
+    }
+
+    function showLogs(fDate = null) {
+        const list = document.getElementById('logList');
+        list.innerHTML = "";
+        let filtered = logs.filter(l => l.id === currentIdx);
+        if(fDate) filtered = filtered.filter(l => l.date === fDate);
+
+        if(filtered.length === 0) {
+            list.innerHTML = "<p style='color:#94a3b8; text-align:center;'>Kayıt bulunamadı.</p>";
+            return;
+        }
+
+        filtered.slice().reverse().forEach(l => {
+            list.innerHTML += `<div class="log-card">
+                <div><strong>${l.tech}</strong><p style="margin:5px 0">${l.op}</p>
+                <small style="color:var(--primary)"># ${l.res}</small></div>
+                <div style="text-align:right; font-size:0.8rem; color:#94a3b8">${l.date}<br>${l.time}</div>
+            </div>`;
+        });
+    }
+
+    function filterData() {
+        const d = document.getElementById('filterDate').value;
+        if(!d) return showLogs();
+        const [y, m, day] = d.split("-");
+        showLogs(`${day}.${m}.${y}`);
+    }
+
+    async function saveData() {
+        const tech = document.getElementById('tech').value;
+        const op = document.getElementById('op').value;
+        const res = document.getElementById('res').value;
+        const btn = document.getElementById('saveBtn');
+
+        if(!tech || !op) return alert("Eksik alan!");
+
+        btn.disabled = true;
+        btn.innerText = "Gönderiliyor...";
+        
+        const now = new Date();
+        const data = {
+            tarih: now.toLocaleDateString('tr-TR'),
+            saat: now.toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}),
+            cihaz: devices[currentIdx], 
+            teknisyen: tech,
+            islem: op,
+            sonuc: res
+        };
+
+        try {
+            await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(data) });
+            logs.push({id: currentIdx, tech: tech, op: op, res: res, date: data.tarih, time: data.saat});
+            showLogs();
+            document.getElementById('msg').style.display = "block";
+            setTimeout(() => document.getElementById('msg').style.display = "none", 3000);
+        } catch (e) { alert("Hata!"); }
+
+        btn.disabled = false;
+        btn.innerText = "Buluta Kaydet";
+        document.getElementById('op').value = "";
+    }
+    loadDevice(0);
+</script>
+</body>
+</html>
