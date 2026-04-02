@@ -7,35 +7,24 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --success: #10b981; }
-        body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; color: #1e293b; }
-        
-        /* Giriş Ekranı */
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 0; padding-bottom: 40px; color: #1e293b; }
         #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; color: var(--sidebar); }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
-
-        /* Başarı Ekranı */
         #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-
-        /* Header & Status */
         .header { background: var(--sidebar); color: white; padding: 25px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .status-bar { font-size: 0.75rem; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; }
         .online { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .device-badge { background: #38bdf8; color: var(--sidebar); padding: 6px 16px; border-radius: 20px; font-weight: 800; margin-top: 12px; display: inline-block; font-size: 0.9rem; }
-
         .main { max-width: 500px; margin: 20px auto; width: 92%; }
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        
         input, textarea, select { width: 100%; padding: 14px; margin: 10px 0 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 1rem; }
         label { font-weight: 800; font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
-
         button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
         button.sending { background: var(--success) !important; }
-
-        /* Geçmiş Kayıtlar */
         .log-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .log-info strong { display: block; font-size: 1rem; margin-bottom: 2px; }
+        .log-info strong { display: block; font-size: 1rem; }
         .log-info span { font-size: 0.85rem; color: #64748b; }
         .log-time { text-align: right; }
         .log-time .d { font-weight: 800; font-size: 0.85rem; color: var(--sidebar); display: block; }
@@ -62,21 +51,15 @@
 <div id="appContent" style="display:none;">
     <div class="header">
         <div style="letter-spacing: 1px; font-weight: 900; text-transform: uppercase;">CİHAZ BAKIM & TAKİP SİSTEMİ</div>
-        <div class="status-bar">
-            <div id="sDot" class="dot"></div>
-            <span id="sText">Sunucu Aranıyor...</span>
-        </div>
+        <div class="status-bar"><div id="sDot" class="dot"></div><span id="sText">Bağlantı Aranıyor...</span></div>
         <div id="devName" class="device-badge">Cihaz...</div>
     </div>
-
     <div class="main">
         <div class="card">
             <label>Teknisyen</label>
             <input type="text" id="tech" placeholder="Ad Soyad">
-            
             <label>Yapılan İşlem</label>
-            <textarea id="proc" rows="3" placeholder="İşlem detaylarını girin..."></textarea>
-            
+            <textarea id="proc" rows="3" placeholder="Detay girin..."></textarea>
             <label>Sonuç</label>
             <select id="res">
                 <option>Faal / Arıza Giderildi</option>
@@ -85,39 +68,28 @@
                 <option>5x Lamba Değişimi Yapıldı</option>
                 <option>Parça Bekliyor / Arızalı</option>
             </select>
-            
-            <button onclick="sendData()" id="btn">
-                <span id="btnTxt">KAYDET VE GÖNDER</span>
-            </button>
+            <button onclick="sendData()" id="btn"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
         </div>
-
         <p style="margin:30px 0 15px 0; font-weight: 900; font-size: 0.85rem; color: var(--sidebar);">BU CİHAZIN SON 3 KAYDI</p>
         <div id="logs"></div>
     </div>
 </div>
 
 <script>
-    // --- GOOGLE SCRIPT LİNKİNİZ ---
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxmjQtPXa0OREdii3WvtIjVu1qIk-qQ1lZIRHGj7GvKumPweNoYv0WVli5a7D-U9KTJuw/exec";
-    
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzHxr5vRw9wbnZAc5fBH8hky4rF5QXKbfkLUCIbF5CApbpd7-SYpgk_Zjb9e9mqWr90Jw/exec";
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
     let curDev = "";
 
-    // Oturum Kontrolü
     function checkAuth() {
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
             initApp();
-        } else {
-            document.getElementById('loginScreen').style.display = 'flex';
-        }
+        } else { document.getElementById('loginScreen').style.display = 'flex'; }
     }
 
     function login() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if (u === "admin" && p === "1234") {
+        if (document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
             sessionStorage.setItem('isLoggedIn', 'true');
             checkAuth();
         } else { alert("Hatalı Giriş!"); }
@@ -136,10 +108,7 @@
     async function checkConnection() {
         try {
             const r = await fetch(GOOGLE_URL + "?action=read&device=test");
-            if(r.ok) {
-                document.getElementById('sDot').classList.add('online');
-                document.getElementById('sText').innerText = "Sunucuya Bağlı";
-            }
+            if(r.ok) { document.getElementById('sDot').classList.add('online'); document.getElementById('sText').innerText = "Sunucuya Bağlı"; }
         } catch(e) { document.getElementById('sText').innerText = "Bağlantı Yok"; }
     }
 
@@ -149,16 +118,10 @@
             const data = await r.json();
             document.getElementById('logs').innerHTML = data.map(l => `
                 <div class="log-item">
-                    <div class="log-info">
-                        <strong>${l.teknisyen}</strong>
-                        <span>${l.sonuc}</span>
-                    </div>
-                    <div class="log-time">
-                        <span class="d">${l.tarih}</span>
-                        <span class="t">${l.saat}</span>
-                    </div>
+                    <div class="log-info"><strong>${l.teknisyen}</strong><span>${l.sonuc}</span></div>
+                    <div class="log-time"><span class="d">${l.tarih}</span><span class="t">${l.saat}</span></div>
                 </div>
-            `).join('') || 'Henüz kayıt bulunmuyor.';
+            `).join('') || 'Kayıt bulunmuyor.';
         } catch(e) {}
     }
 
@@ -166,21 +129,17 @@
         const t = document.getElementById('tech').value;
         const p = document.getElementById('proc').value;
         const r = document.getElementById('res').value;
-        if(!t || !p) return alert("Lütfen boş alan bırakmayın.");
+        if(!t || !p) return alert("Eksik alan!");
 
         const btn = document.getElementById('btn');
         btn.classList.add('sending');
         document.getElementById('btnTxt').innerText = "GÖNDERİLİYOR...";
         btn.disabled = true;
 
-        // Saat hatasını kökten çözen 24 saat formatı
+        const now = new Date();
         const payload = {
-            tarih: new Date().toLocaleDateString('tr-TR'),
-            saat: new Date().toLocaleTimeString('tr-TR', {
-                hour: '2-digit', 
-                minute: '2-digit', 
-                hour12: false 
-            }),
+            tarih: now.toLocaleDateString('tr-TR'),
+            saat: now.getHours().toString().padStart(2,'0') + ":" + now.getMinutes().toString().padStart(2,'0'),
             cihaz: curDev, teknisyen: t, islem: p, sonuc: r
         };
 
@@ -188,11 +147,7 @@
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             document.getElementById('successOverlay').style.display = 'flex';
             setTimeout(() => { location.reload(); }, 2000);
-        } catch(e) { 
-            alert("Hata oluştu!"); 
-            btn.classList.remove('sending');
-            btn.disabled = false;
-        }
+        } catch(e) { alert("Hata!"); btn.classList.remove('sending'); btn.disabled = false; }
     }
 </script>
 </body>
