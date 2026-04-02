@@ -9,6 +9,14 @@
         :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --success: #10b981; }
         body { font-family: sans-serif; background: var(--bg); margin: 0; padding-bottom: 40px; color: #1e293b; }
         
+        /* Giriş Ekranı */
+        #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; color: white; }
+        .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; color: var(--sidebar); }
+        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
+
+        /* Başarı Ekranı */
+        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
+
         /* Header & Status */
         .header { background: var(--sidebar); color: white; padding: 25px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
         .status-bar { font-size: 0.75rem; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; }
@@ -22,16 +30,12 @@
         input, textarea, select { width: 100%; padding: 14px; margin: 10px 0 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 1rem; }
         label { font-weight: 800; font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
 
-        /* Buton Efektleri */
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
         button.sending { background: var(--success) !important; }
 
-        /* Başarı Ekranı */
-        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-        
-        /* Geçmiş Kayıtlar */
-        .log-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .log-info strong { display: block; font-size: 1rem; margin-bottom: 2px; }
+        /* Kayıtlar */
+        .log-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+        .log-info strong { display: block; font-size: 1rem; }
         .log-info span { font-size: 0.85rem; color: #64748b; }
         .log-time { text-align: right; }
         .log-time .d { font-weight: 800; font-size: 0.85rem; color: var(--sidebar); display: block; }
@@ -40,53 +44,75 @@
 </head>
 <body>
 
+<div id="loginScreen">
+    <div class="login-box">
+        <h2 style="margin-bottom:20px;">Sistem Girişi</h2>
+        <input type="text" id="user" placeholder="Kullanıcı Adı">
+        <input type="password" id="pass" placeholder="Şifre">
+        <button onclick="login()">GİRİŞ YAP</button>
+    </div>
+</div>
+
 <div id="successOverlay">
     <span class="material-icons-round" style="font-size: 80px; color: var(--success);">check_circle</span>
     <h2 style="margin-top:20px;">KAYIT GÖNDERİLDİ!</h2>
-    <p style="color: #94a3b8;">Veriler başarıyla işlendi.</p>
+    <p style="color: #94a3b8;">Veriler E-Tabloya işlendi.</p>
 </div>
 
-<div class="header">
-    <div style="letter-spacing: 1px; font-weight: 900;">TEKNİK SERVİS TAKİP</div>
-    <div class="status-bar">
-        <div id="sDot" class="dot"></div>
-        <span id="sText">Sunucu Aranıyor...</span>
-    </div>
-    <div id="devName" class="device-badge">Cihaz...</div>
-</div>
-
-<div class="main">
-    <div class="card">
-        <label>Teknisyen</label>
-        <input type="text" id="tech" placeholder="Ad Soyad">
-        
-        <label>Yapılan İşlem</label>
-        <textarea id="proc" rows="3" placeholder="Detaylı açıklama..."></textarea>
-        
-        <label>Sonuç</label>
-        <select id="res">
-            <option>Faal / Arıza Giderildi</option>
-            <option>İç Kalibrasyon Yapıldı</option>
-            <option>4x Lamba Değişimi Yapıldı</option>
-            <option>5x Lamba Değişimi Yapıldı</option>
-            <option>Parça Bekliyor / Arızalı</option>
-        </select>
-        
-        <button onclick="sendData()" id="btn">
-            <span id="btnTxt">KAYDET VE GÖNDER</span>
-        </button>
+<div id="appContent" style="display:none;">
+    <div class="header">
+        <div style="font-weight: 900;">TEKNİK SERVİS TAKİP</div>
+        <div class="status-bar">
+            <div id="sDot" class="dot"></div>
+            <span id="sText">Bağlantı Kontrolü...</span>
+        </div>
+        <div id="devName" class="device-badge">Cihaz...</div>
     </div>
 
-    <p style="margin:30px 0 15px 0; font-weight: 900; font-size: 0.85rem; color: var(--sidebar);">BU CİHAZIN SON 3 KAYDI</p>
-    <div id="logs"></div>
+    <div class="main">
+        <div class="card">
+            <label>Teknisyen</label>
+            <input type="text" id="tech" placeholder="Ad Soyad">
+            
+            <label>Yapılan İşlem</label>
+            <textarea id="proc" rows="3" placeholder="Detay yazın..."></textarea>
+            
+            <label>Sonuç</label>
+            <select id="res">
+                <option>Faal / Arıza Giderildi</option>
+                <option>İç Kalibrasyon Yapıldı</option>
+                <option>4x Lamba Değişimi Yapıldı</option>
+                <option>5x Lamba Değişimi Yapıldı</option>
+                <option>Parça Bekliyor / Arızalı</option>
+            </select>
+            
+            <button onclick="sendData()" id="btn">
+                <span id="btnTxt">KAYDET VE GÖNDER</span>
+            </button>
+        </div>
+
+        <p style="margin:30px 0 15px 0; font-weight: 900; font-size: 0.85rem; color: #64748b;">BU CİHAZIN SON 3 KAYDI</p>
+        <div id="logs"></div>
+    </div>
 </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwPjT8sjfwYF_t6CtgZ7uU-3KE8HJ9SgxuLso_9B4AxTulQnkG4r1vzt_z4y-Jhrrtj7A/exec";
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbzW9fBIeltczh4VNAGRYkdJB2AHvPBxWZhjIQgWv1a-4mXn7EOC8YLRaHQh2-wZBXBW/exec";
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
     let curDev = "";
 
-    async function init() {
+    // GİRİŞ FONKSİYONU (Her seferinde şifre sorması için hafızayı kullanmıyoruz)
+    function login() {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if (u === "admin" && p === "1234") {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContent').style.display = 'block';
+            initForm();
+        } else { alert("Hatalı Giriş!"); }
+    }
+
+    async function initForm() {
         const id = new URLSearchParams(window.location.search).get('cihaz');
         if(id !== null && devices[id]) {
             curDev = devices[id];
@@ -121,7 +147,7 @@
                         <span class="t">${l.saat}</span>
                     </div>
                 </div>
-            `).join('') || 'Henüz kayıt bulunmuyor.';
+            `).join('') || 'Kayıt bulunamadı.';
         } catch(e) {}
     }
 
@@ -129,7 +155,7 @@
         const t = document.getElementById('tech').value;
         const p = document.getElementById('proc').value;
         const r = document.getElementById('res').value;
-        if(!t || !p) return alert("Lütfen boş alan bırakmayın.");
+        if(!t || !p) return alert("Eksik bilgi!");
 
         const btn = document.getElementById('btn');
         btn.classList.add('sending');
@@ -144,21 +170,14 @@
 
         try {
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            
-            // Başarı ekranını göster
             document.getElementById('successOverlay').style.display = 'flex';
-            
-            setTimeout(() => {
-                location.reload();
-            }, 2000);
+            setTimeout(() => { location.reload(); }, 2000);
         } catch(e) { 
-            alert("Hata oluştu!"); 
+            alert("Hata!"); 
             btn.classList.remove('sending');
             btn.disabled = false;
         }
     }
-    
-    init();
 </script>
 </body>
 </html>
