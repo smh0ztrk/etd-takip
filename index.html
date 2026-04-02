@@ -3,136 +3,103 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ETD QR Takip</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
+    <title>ETD Teknik Takip</title>
     <style>
-        :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --text: #1e293b; --success: #10b981; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 30px; color: var(--text); }
-        #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
+        :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; }
+        body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 0; }
         .header { background: var(--sidebar); color: white; padding: 20px; text-align: center; }
-        .device-badge { background: #38bdf8; color: var(--sidebar); padding: 5px 15px; border-radius: 20px; font-weight: 800; margin-top: 10px; display: inline-block; }
-        .main-content { max-width: 500px; margin: 20px auto; width: 92%; }
-        .form-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        label { display: block; font-weight: 800; font-size: 0.75rem; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
-        input, textarea, select { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; box-sizing: border-box; outline: none; }
-        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .log-date { text-align: right; font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
-        #msg { display: none; text-align: center; padding: 15px; border-radius: 12px; background: #ecfdf5; color: var(--success); font-weight: 700; margin-top: 15px; }
+        .main { max-width: 500px; margin: 20px auto; width: 90%; }
+        .card { background: white; padding: 20px; border-radius: 15px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-bottom: 20px; }
+        input, textarea, select { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; box-sizing: border-box; }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 15px; border-radius: 10px; font-weight: bold; cursor: pointer; }
+        
+        /* Geçmiş Kayıt Tasarımı */
+        .log-item { background: white; padding: 15px; border-radius: 12px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .log-info { flex: 1; }
+        .log-info strong { display: block; color: var(--sidebar); margin-bottom: 3px; }
+        .log-info span { font-size: 0.85rem; color: #475569; }
+        .log-time { text-align: right; min-width: 80px; }
+        .log-time .d { font-weight: bold; font-size: 0.85rem; color: var(--sidebar); display: block; }
+        .log-time .t { font-size: 0.75rem; color: #94a3b8; }
     </style>
 </head>
-<body onload="checkAuth()">
+<body onload="init()">
 
-<div id="loginScreen">
-    <div class="login-box">
-        <h2>Sistem Girişi</h2>
-        <input type="text" id="user" placeholder="Kullanıcı Adı">
-        <input type="password" id="pass" placeholder="Şifre">
-        <button class="btn-save" style="width:100%" onclick="login()">GİRİŞ YAP</button>
-    </div>
+<div class="header">
+    <div style="font-weight:bold;">TEKNİK SERVİS FORMU</div>
+    <div id="devName" style="margin-top:10px; font-size:0.9rem; color:#38bdf8;">Cihaz Yükleniyor...</div>
 </div>
 
-<div id="appContent" style="display:none;">
-    <div class="header">
-        <div style="font-weight:800; font-size: 1.1rem;">TEKNİK SERVİS TAKİP</div>
-        <div id="deviceDisplay" class="device-badge">Yükleniyor...</div>
+<div class="main">
+    <div class="card">
+        <input type="text" id="tech" placeholder="Teknisyen Adı">
+        <textarea id="proc" rows="3" placeholder="Yapılan İşlem"></textarea>
+        <select id="res">
+            <option>Faal / Arıza Giderildi</option>
+            <option>İç Kalibrasyon Yapıldı</option>
+            <option>4x Lamba Değişimi Yapıldı</option>
+            <option>5x Lamba Değişimi Yapıldı</option>
+            <option>Parça Bekliyor / Arızalı</option>
+        </select>
+        <button onclick="sendData()" id="btn">KAYDET VE GÖNDER</button>
     </div>
 
-    <div class="main-content">
-        <div class="form-container">
-            <label>Teknisyen</label>
-            <input type="text" id="techName" placeholder="Ad Soyad">
-            <label>İşlem Detayı</label>
-            <textarea id="actionDetail" rows="3"></textarea>
-            <label>Sonuç</label>
-            <select id="workResult">
-                <option>Faal / Arıza Giderildi</option>
-                <option>İç Kalibrasyon Yapıldı</option>
-                <option>4x Lamba Değişimi Yapıldı</option>
-                <option>5x Lamba Değişimi Yapıldı</option>
-                <option>Parça Bekliyor / Arızalı</option>
-            </select>
-            <button class="btn-save" id="saveBtn" style="width:100%" onclick="submitForm()"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
-            <div id="msg">✅ Kayıt Gönderildi!</div>
-        </div>
-        
-        <p style="margin:25px 0 10px 0; font-weight:800; font-size:0.8rem; color:#64748b;">GEÇMİŞ KAYITLAR (SON 3)</p>
-        <div id="deviceLogs"></div>
-    </div>
+    <div style="font-weight:bold; margin-bottom:10px; font-size:0.9rem;">BU CİHAZIN SON 3 KAYDI</div>
+    <div id="logs"></div>
 </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbw3OX9ml2dIkkzJxZEK_Jh42PBVJcRB6CnHYTOmSUQt-eb-tdmwNl-JyggwzmpARglWJw/exec";
+    // --- KENDİ LİNKİNİZLE DEĞİŞTİRİN ---
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyfmLlXpWLhH6Irh7PWjRfAjkI3wgDXvqg3cmpSsZAfnBHj23CQO56gvYonwVVbIgxeGw/exec";
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
-    let selectedDevice = "";
+    let curDev = "";
 
-    function checkAuth() {
-        if (sessionStorage.getItem('isLoggedIn') === 'true') {
-            document.getElementById('loginScreen').style.display = 'none';
-            document.getElementById('appContent').style.display = 'block';
-            initApp();
-        }
-    }
-
-    function login() {
-        if (document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
-            sessionStorage.setItem('isLoggedIn', 'true');
-            checkAuth();
-        } else { alert("Hatalı!"); }
-    }
-
-    function initApp() {
+    function init() {
         const id = new URLSearchParams(window.location.search).get('cihaz');
-        if (id !== null && devices[id]) {
-            selectedDevice = devices[id];
-            document.getElementById('deviceDisplay').innerText = selectedDevice;
-            loadPastLogs(selectedDevice);
+        if(id !== null && devices[id]) {
+            curDev = devices[id];
+            document.getElementById('devName').innerText = curDev;
+            getLogs();
         }
     }
 
-    async function loadPastLogs(deviceName) {
+    async function getLogs() {
         try {
-            const res = await fetch(GOOGLE_URL + "?action=read&device=" + encodeURIComponent(deviceName));
-            const data = await res.json();
-            const list = document.getElementById('deviceLogs');
-            list.innerHTML = data.map(l => `
-                <div class="log-card">
-                    <div><strong>${l.teknisyen}</strong><br><small>${l.sonuc}</small></div>
-                    <div class="log-date">${l.tarih}<br>${l.saat}</div>
+            const r = await fetch(GOOGLE_URL + "?action=read&device=" + encodeURIComponent(curDev));
+            const data = await r.json();
+            document.getElementById('logs').innerHTML = data.map(l => `
+                <div class="log-item">
+                    <div class="log-info">
+                        <strong>${l.teknisyen}</strong>
+                        <span>${l.sonuc}</span>
+                    </div>
+                    <div class="log-time">
+                        <span class="d">${l.tarih}</span>
+                        <span class="t">${l.saat}</span>
+                    </div>
                 </div>
             `).join('') || 'Kayıt yok.';
         } catch(e) { }
     }
 
-    async function submitForm() {
-        const tech = document.getElementById('techName').value;
-        const op = document.getElementById('actionDetail').value;
-        const res = document.getElementById('workResult').value;
-        if(!tech || !op) return alert("Boş bırakmayın!");
+    async function sendData() {
+        const t = document.getElementById('tech').value;
+        const p = document.getElementById('proc').value;
+        const r = document.getElementById('res').value;
+        if(!t || !p) return alert("Lütfen boş alan bırakmayın.");
 
-        const btn = document.getElementById('saveBtn');
-        btn.disabled = true;
-        document.getElementById('btnTxt').innerText = "GÖNDERİLİYOR...";
-
+        document.getElementById('btn').disabled = true;
         const payload = {
             tarih: new Date().toLocaleDateString('tr-TR'),
             saat: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}),
-            cihaz: selectedDevice, teknisyen: tech, islem: op, sonuc: res
+            cihaz: curDev, teknisyen: t, islem: p, sonuc: r
         };
 
         try {
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
-            document.getElementById('msg').style.display = "block";
-            setTimeout(() => {
-                document.getElementById('msg').style.display = "none";
-                document.getElementById('actionDetail').value = "";
-                btn.disabled = false;
-                document.getElementById('btnTxt').innerText = "KAYDET VE GÖNDER";
-                loadPastLogs(selectedDevice);
-            }, 2000);
-        } catch (e) { alert("Hata!"); btn.disabled = false; }
+            alert("Başarıyla Kaydedildi!");
+            location.reload();
+        } catch(e) { alert("Hata oluştu!"); }
     }
 </script>
 </body>
