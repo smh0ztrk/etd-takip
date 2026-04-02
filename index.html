@@ -8,21 +8,37 @@
     <style>
         :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --success: #10b981; }
         body { font-family: sans-serif; background: var(--bg); margin: 0; padding: 0; padding-bottom: 40px; color: #1e293b; }
+        
+        /* Giriş Ekranı */
         #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; color: var(--sidebar); }
-        .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; font-size: 1rem; }
+        .login-box { background: white; padding: 40px 30px; border-radius: 24px; width: 300px; text-align: center; color: var(--sidebar); box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
+        .login-box .etd-logo { font-size: 50px; color: var(--primary); margin-bottom: 10px; }
+        .login-box h2 { margin: 0 0 25px 0; font-size: 1.4rem; font-weight: 800; color: var(--sidebar); }
+        .login-box input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
+        .login-box input:focus { border-color: var(--primary); }
+
+        /* Başarı Ekranı */
         #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
-        .header { background: var(--sidebar); color: white; padding: 25px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+
+        /* Header & Status */
+        .header { background: var(--sidebar); color: white; padding: 25px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; }
+        .header .header-icon { font-size: 28px; margin-bottom: 5px; color: #38bdf8; }
         .status-bar { font-size: 0.75rem; margin-top: 8px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; }
         .dot { width: 10px; height: 10px; border-radius: 50%; background: #94a3b8; }
         .online { background: var(--success); box-shadow: 0 0 8px var(--success); }
         .device-badge { background: #38bdf8; color: var(--sidebar); padding: 6px 16px; border-radius: 20px; font-weight: 800; margin-top: 12px; display: inline-block; font-size: 0.9rem; }
+
         .main { max-width: 500px; margin: 20px auto; width: 92%; }
         .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 1rem; }
+        
+        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 1rem; font-family: inherit; }
         label { font-weight: 800; font-size: 0.75rem; color: #64748b; text-transform: uppercase; }
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        button:active { transform: scale(0.98); }
         button.sending { background: var(--success) !important; }
+
+        /* Geçmiş Kayıtlar */
         .log-item { background: white; padding: 15px; border-radius: 15px; margin-bottom: 12px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
         .log-info strong { display: block; font-size: 1rem; }
         .log-info span { font-size: 0.85rem; color: #64748b; }
@@ -35,8 +51,9 @@
 
 <div id="loginScreen">
     <div class="login-box">
-        <h2 style="margin-bottom:20px;">Sistem Girişi</h2>
-        <input type="text" id="user" placeholder="Kullanıcı Adı">
+        <span class="material-icons-round etd-logo">settings_suggest</span>
+        <h2>ETD Teknik Portalı</h2>
+        <input type="text" id="user" placeholder="Kullanıcı Adı" autocomplete="off">
         <input type="password" id="pass" placeholder="Şifre">
         <button onclick="login()">GİRİŞ YAP</button>
     </div>
@@ -50,16 +67,23 @@
 
 <div id="appContent" style="display:none;">
     <div class="header">
+        <span class="material-icons-round header-icon">build_circle</span>
         <div style="letter-spacing: 1px; font-weight: 900; text-transform: uppercase;">CİHAZ BAKIM & TAKİP SİSTEMİ</div>
-        <div class="status-bar"><div id="sDot" class="dot"></div><span id="sText">Bağlantı Aranıyor...</span></div>
+        <div class="status-bar">
+            <div id="sDot" class="dot"></div>
+            <span id="sText">Bağlantı Aranıyor...</span>
+        </div>
         <div id="devName" class="device-badge">Cihaz...</div>
     </div>
+
     <div class="main">
         <div class="card">
             <label>Teknisyen</label>
             <input type="text" id="tech" placeholder="Ad Soyad">
+            
             <label>Yapılan İşlem</label>
-            <textarea id="proc" rows="3" placeholder="Detay girin..."></textarea>
+            <textarea id="proc" rows="3" placeholder="Detayları girin..."></textarea>
+            
             <label>Sonuç</label>
             <select id="res">
                 <option>Faal / Arıza Giderildi</option>
@@ -68,9 +92,17 @@
                 <option>5x Lamba Değişimi Yapıldı</option>
                 <option>Parça Bekliyor / Arızalı</option>
             </select>
-            <button onclick="sendData()" id="btn"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
+            
+            <button onclick="sendData()" id="btn">
+                <span class="material-icons-round">send</span>
+                <span id="btnTxt">KAYDET VE GÖNDER</span>
+            </button>
         </div>
-        <p style="margin:30px 0 15px 0; font-weight: 900; font-size: 0.85rem; color: var(--sidebar);">BU CİHAZIN SON 3 KAYDI</p>
+
+        <p style="margin:30px 0 15px 0; font-weight: 900; font-size: 0.85rem; color: var(--sidebar); display: flex; align-items: center; gap: 5px;">
+            <span class="material-icons-round" style="font-size: 18px;">history</span>
+            BU CİHAZIN SON 3 KAYDI
+        </p>
         <div id="logs"></div>
     </div>
 </div>
@@ -85,7 +117,9 @@
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
             initApp();
-        } else { document.getElementById('loginScreen').style.display = 'flex'; }
+        } else {
+            document.getElementById('loginScreen').style.display = 'flex';
+        }
     }
 
     function login() {
@@ -108,7 +142,10 @@
     async function checkConnection() {
         try {
             const r = await fetch(GOOGLE_URL + "?action=read&device=test");
-            if(r.ok) { document.getElementById('sDot').classList.add('online'); document.getElementById('sText').innerText = "Sunucuya Bağlı"; }
+            if(r.ok) {
+                document.getElementById('sDot').classList.add('online');
+                document.getElementById('sText').innerText = "Sunucuya Bağlı";
+            }
         } catch(e) { document.getElementById('sText').innerText = "Bağlantı Yok"; }
     }
 
@@ -118,10 +155,16 @@
             const data = await r.json();
             document.getElementById('logs').innerHTML = data.map(l => `
                 <div class="log-item">
-                    <div class="log-info"><strong>${l.teknisyen}</strong><span>${l.sonuc}</span></div>
-                    <div class="log-time"><span class="d">${l.tarih}</span><span class="t">${l.saat}</span></div>
+                    <div class="log-info">
+                        <strong>${l.teknisyen}</strong>
+                        <span>${l.sonuc}</span>
+                    </div>
+                    <div class="log-time">
+                        <span class="d">${l.tarih}</span>
+                        <span class="t">${l.saat}</span>
+                    </div>
                 </div>
-            `).join('') || 'Kayıt bulunmuyor.';
+            `).join('') || 'Kayıt bulunamadı.';
         } catch(e) {}
     }
 
@@ -147,7 +190,11 @@
             await fetch(GOOGLE_URL, { method: 'POST', mode: 'no-cors', body: JSON.stringify(payload) });
             document.getElementById('successOverlay').style.display = 'flex';
             setTimeout(() => { location.reload(); }, 2000);
-        } catch(e) { alert("Hata!"); btn.classList.remove('sending'); btn.disabled = false; }
+        } catch(e) { 
+            alert("Hata!"); 
+            btn.classList.remove('sending');
+            btn.disabled = false;
+        }
     }
 </script>
 </body>
