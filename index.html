@@ -3,42 +3,31 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ETD Teknik QR Takip</title>
+    <title>ETD QR Takip</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
-        :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --text: #1e293b; --success: #10b981; --danger: #ef4444; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-bottom: 30px; }
-        
-        /* Giriş Ekranı */
+        :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --text: #1e293b; --success: #10b981; }
+        body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; padding-bottom: 30px; color: var(--text); }
         #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
-
-        /* Ana Yapı */
         .header { background: var(--sidebar); color: white; padding: 20px; text-align: center; }
-        .status-bar { font-size: 0.7rem; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
-        .online { background: var(--success); } .offline { background: var(--danger); }
         .device-badge { background: #38bdf8; color: var(--sidebar); padding: 5px 15px; border-radius: 20px; font-weight: 800; margin-top: 10px; display: inline-block; }
-
         .main-content { max-width: 500px; margin: 20px auto; width: 92%; }
         .form-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
         label { display: block; font-weight: 800; font-size: 0.75rem; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
         input, textarea, select { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; box-sizing: border-box; outline: none; }
-
-        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-        #msg { display: none; text-align: center; padding: 15px; border-radius: 12px; background: #ecfdf5; color: var(--success); font-weight: 700; margin-top: 15px; }
-
-        /* Geçmiş Kayıtlar */
+        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; }
         .log-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .log-date { text-align: right; font-size: 0.7rem; color: #94a3b8; }
+        .log-date { text-align: right; font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+        #msg { display: none; text-align: center; padding: 15px; border-radius: 12px; background: #ecfdf5; color: var(--success); font-weight: 700; margin-top: 15px; }
     </style>
 </head>
 <body onload="checkAuth()">
 
 <div id="loginScreen">
     <div class="login-box">
-        <h2 style="margin-bottom:20px;">Sistem Girişi</h2>
+        <h2>Sistem Girişi</h2>
         <input type="text" id="user" placeholder="Kullanıcı Adı">
         <input type="password" id="pass" placeholder="Şifre">
         <button class="btn-save" style="width:100%" onclick="login()">GİRİŞ YAP</button>
@@ -47,44 +36,36 @@
 
 <div id="appContent" style="display:none;">
     <div class="header">
-        <div style="font-weight:800; font-size: 1.2rem;">TEKNİK SERVİS FORMU</div>
-        <div class="status-bar"><span id="statusDot" class="dot"></span><span id="statusText">Bağlanıyor...</span></div>
-        <div id="deviceDisplay" class="device-badge">Cihaz...</div>
+        <div style="font-weight:800; font-size: 1.1rem;">TEKNİK SERVİS TAKİP</div>
+        <div id="deviceDisplay" class="device-badge">Yükleniyor...</div>
     </div>
 
     <div class="main-content">
-        <div id="formBody" class="form-container">
+        <div class="form-container">
             <label>Teknisyen</label>
             <input type="text" id="techName" placeholder="Ad Soyad">
-            <label>Yapılan İşlem</label>
-            <textarea id="actionDetail" rows="3" placeholder="Detaylı açıklama girin..."></textarea>
+            <label>İşlem Detayı</label>
+            <textarea id="actionDetail" rows="3"></textarea>
             <label>Sonuç</label>
             <select id="workResult">
                 <option>Faal / Arıza Giderildi</option>
                 <option>İç Kalibrasyon Yapıldı</option>
                 <option>4x Lamba Değişimi Yapıldı</option>
                 <option>5x Lamba Değişimi Yapıldı</option>
-                <option>4x Çelik Filtre Değişimi yapıldı</option>
-                <option>5x Çelik Filtre Değişimi yapıldı</option>
-                <option>İnlet Filtre Değişimi Yapıldı</option>
-                <option>Dopant Değişimi Yapıldı</option>
                 <option>Parça Bekliyor / Arızalı</option>
             </select>
-            <button class="btn-save" id="saveBtn" onclick="submitForm()"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
-            <div id="msg">✅ Kayıt Başarıyla Eklendi!</div>
+            <button class="btn-save" id="saveBtn" style="width:100%" onclick="submitForm()"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
+            <div id="msg">✅ Kayıt Gönderildi!</div>
         </div>
         
-        <div style="margin:25px 0 10px 0; font-weight:800; font-size:0.8rem; color:var(--sidebar);">BU CİHAZIN SON 3 KAYDI</div>
+        <p style="margin:25px 0 10px 0; font-weight:800; font-size:0.8rem; color:#64748b;">GEÇMİŞ KAYITLAR (SON 3)</p>
         <div id="deviceLogs"></div>
     </div>
 </div>
 
 <script>
-    // --- BURAYI GÜNCELLE ---
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyuoR8JWjIPkcAYw5TdCNrbBqGVQHMlCA7QqloCEcVXqF6xLc0R8J6_SPW79YawGGf6VQ/exec";
-    
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbw3OX9ml2dIkkzJxZEK_Jh42PBVJcRB6CnHYTOmSUQt-eb-tdmwNl-JyggwzmpARglWJw/exec";
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
-
     let selectedDevice = "";
 
     function checkAuth() {
@@ -96,32 +77,19 @@
     }
 
     function login() {
-        const u = document.getElementById('user').value;
-        const p = document.getElementById('pass').value;
-        if (u === "admin" && p === "1234") {
+        if (document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
             sessionStorage.setItem('isLoggedIn', 'true');
             checkAuth();
-        } else { alert("Hatalı Giriş!"); }
+        } else { alert("Hatalı!"); }
     }
 
-    async function initApp() {
+    function initApp() {
         const id = new URLSearchParams(window.location.search).get('cihaz');
         if (id !== null && devices[id]) {
             selectedDevice = devices[id];
             document.getElementById('deviceDisplay').innerText = selectedDevice;
-            checkServerStatus();
             loadPastLogs(selectedDevice);
         }
-    }
-
-    async function checkServerStatus() {
-        try {
-            const res = await fetch(GOOGLE_URL + "?action=read&device=test");
-            if (res.ok) { 
-                document.getElementById('statusDot').className = "dot online";
-                document.getElementById('statusText').innerText = "Sunucu Online";
-            }
-        } catch (e) { document.getElementById('statusText').innerText = "Bağlantı Yok"; }
     }
 
     async function loadPastLogs(deviceName) {
@@ -129,24 +97,20 @@
             const res = await fetch(GOOGLE_URL + "?action=read&device=" + encodeURIComponent(deviceName));
             const data = await res.json();
             const list = document.getElementById('deviceLogs');
-            if(!data || data.length === 0) {
-                list.innerHTML = '<p style="font-size:0.7rem; color:gray;">Henüz kayıt yok.</p>';
-                return;
-            }
             list.innerHTML = data.map(l => `
                 <div class="log-card">
                     <div><strong>${l.teknisyen}</strong><br><small>${l.sonuc}</small></div>
                     <div class="log-date">${l.tarih}<br>${l.saat}</div>
                 </div>
-            `).join('');
-        } catch(e) { console.log("Hata:", e); }
+            `).join('') || 'Kayıt yok.';
+        } catch(e) { }
     }
 
     async function submitForm() {
         const tech = document.getElementById('techName').value;
         const op = document.getElementById('actionDetail').value;
         const res = document.getElementById('workResult').value;
-        if(!tech || !op) return alert("Lütfen tüm alanları doldurun!");
+        if(!tech || !op) return alert("Boş bırakmayın!");
 
         const btn = document.getElementById('saveBtn');
         btn.disabled = true;
@@ -168,7 +132,7 @@
                 document.getElementById('btnTxt').innerText = "KAYDET VE GÖNDER";
                 loadPastLogs(selectedDevice);
             }, 2000);
-        } catch (e) { alert("Bağlantı Hatası!"); btn.disabled = false; }
+        } catch (e) { alert("Hata!"); btn.disabled = false; }
     }
 </script>
 </body>
