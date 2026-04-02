@@ -97,13 +97,13 @@
 </div>
 
 <script>
-    // --- KENDİ GOOGLE SCRIPT LİNKİNİZİ BURAYA YAPIŞTIRIN ---
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbwR_uO3Li-I3aJXKiEBamDyZZdksPB1uDeVG98z0g7xF4gytNHuF4-u88egO5EbKjZ_pA/exec";
+    // --- GOOGLE SCRIPT LİNKİNİZ ---
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbxmjQtPXa0OREdii3WvtIjVu1qIk-qQ1lZIRHGj7GvKumPweNoYv0WVli5a7D-U9KTJuw/exec";
     
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
     let curDev = "";
 
-    // Oturum Kontrolü (Hafızada varsa şifre sormaz)
+    // Oturum Kontrolü
     function checkAuth() {
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginScreen').style.display = 'none';
@@ -173,9 +173,14 @@
         document.getElementById('btnTxt').innerText = "GÖNDERİLİYOR...";
         btn.disabled = true;
 
+        // Saat hatasını kökten çözen 24 saat formatı
         const payload = {
             tarih: new Date().toLocaleDateString('tr-TR'),
-            saat: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}),
+            saat: new Date().toLocaleTimeString('tr-TR', {
+                hour: '2-digit', 
+                minute: '2-digit', 
+                hour12: false 
+            }),
             cihaz: curDev, teknisyen: t, islem: p, sonuc: r
         };
 
