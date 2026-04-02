@@ -3,26 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>ETD Teknik Takip</title>
+    <title>ETD Teknik QR Takip</title>
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Round" rel="stylesheet">
     <style>
         :root { --primary: #2563eb; --sidebar: #0f172a; --bg: #f1f5f9; --text: #1e293b; --success: #10b981; --danger: #ef4444; }
         body { font-family: 'Inter', sans-serif; background-color: var(--bg); margin: 0; color: var(--text); padding-bottom: 30px; }
+        
+        /* Giriş Ekranı */
         #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .login-box { background: white; padding: 30px; border-radius: 20px; width: 280px; text-align: center; }
         .login-box input { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 10px; box-sizing: border-box; }
+
+        /* Ana Yapı */
         .header { background: var(--sidebar); color: white; padding: 20px; text-align: center; }
         .status-bar { font-size: 0.7rem; margin-top: 5px; display: flex; align-items: center; justify-content: center; gap: 5px; }
         .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
         .online { background: var(--success); } .offline { background: var(--danger); }
         .device-badge { background: #38bdf8; color: var(--sidebar); padding: 5px 15px; border-radius: 20px; font-weight: 800; margin-top: 10px; display: inline-block; }
+
         .main-content { max-width: 500px; margin: 20px auto; width: 92%; }
         .form-container { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        label { display: block; font-weight: 800; font-size: 0.75rem; color: #64748b; margin-bottom: 5px; }
-        input, textarea, select { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; box-sizing: border-box; }
-        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
+        label { display: block; font-weight: 800; font-size: 0.75rem; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        input, textarea, select { width: 100%; padding: 14px; margin-bottom: 20px; border: 2px solid #e2e8f0; border-radius: 12px; font-size: 1rem; box-sizing: border-box; outline: none; }
+
+        .btn-save { background: var(--primary); color: white; width: 100%; padding: 16px; border: none; border-radius: 12px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         #msg { display: none; text-align: center; padding: 15px; border-radius: 12px; background: #ecfdf5; color: var(--success); font-weight: 700; margin-top: 15px; }
-        .log-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; }
+
+        /* Geçmiş Kayıtlar */
+        .log-card { background: white; padding: 15px; border-radius: 15px; margin-bottom: 10px; border-left: 5px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
         .log-date { text-align: right; font-size: 0.7rem; color: #94a3b8; }
     </style>
 </head>
@@ -33,7 +41,7 @@
         <h2 style="margin-bottom:20px;">Sistem Girişi</h2>
         <input type="text" id="user" placeholder="Kullanıcı Adı">
         <input type="password" id="pass" placeholder="Şifre">
-        <button class="btn-save" onclick="login()">GİRİŞ YAP</button>
+        <button class="btn-save" style="width:100%" onclick="login()">GİRİŞ YAP</button>
     </div>
 </div>
 
@@ -48,26 +56,33 @@
         <div id="formBody" class="form-container">
             <label>Teknisyen</label>
             <input type="text" id="techName" placeholder="Ad Soyad">
-            <label>İşlem Detayı</label>
-            <textarea id="actionDetail" rows="3"></textarea>
+            <label>Yapılan İşlem</label>
+            <textarea id="actionDetail" rows="3" placeholder="Detaylı açıklama girin..."></textarea>
             <label>Sonuç</label>
             <select id="workResult">
                 <option>Faal / Arıza Giderildi</option>
                 <option>İç Kalibrasyon Yapıldı</option>
                 <option>4x Lamba Değişimi Yapıldı</option>
                 <option>5x Lamba Değişimi Yapıldı</option>
+                <option>4x Çelik Filtre Değişimi yapıldı</option>
+                <option>5x Çelik Filtre Değişimi yapıldı</option>
+                <option>İnlet Filtre Değişimi Yapıldı</option>
+                <option>Dopant Değişimi Yapıldı</option>
                 <option>Parça Bekliyor / Arızalı</option>
             </select>
-            <button class="btn-save" id="saveBtn" onclick="submitForm()"><span id="btnTxt">KAYDET</span></button>
-            <div id="msg">✅ Kayıt Başarıyla Gönderildi!</div>
+            <button class="btn-save" id="saveBtn" onclick="submitForm()"><span id="btnTxt">KAYDET VE GÖNDER</span></button>
+            <div id="msg">✅ Kayıt Başarıyla Eklendi!</div>
         </div>
-        <div style="margin:20px 0 10px 0; font-weight:800; font-size:0.8rem;">SON 3 KAYIT</div>
+        
+        <div style="margin:25px 0 10px 0; font-weight:800; font-size:0.8rem; color:var(--sidebar);">BU CİHAZIN SON 3 KAYDI</div>
         <div id="deviceLogs"></div>
     </div>
 </div>
 
 <script>
-    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycby6HV-lQFXEfoig66jZnpmq6Byw8_Tw1EYd-I0yVKe_JCwvndIsQ4EC8NBwjBdtdn0ylQ/exec";
+    // --- BURAYI GÜNCELLE ---
+    const GOOGLE_URL = "https://script.google.com/macros/s/AKfycbyuoR8JWjIPkcAYw5TdCNrbBqGVQHMlCA7QqloCEcVXqF6xLc0R8J6_SPW79YawGGf6VQ/exec";
+    
     const devices = ["4X (24-4463)", "4X (24-4461)", "4X (24-4465)", "4X (24-4475)", "4X (24-4449)", "4X (24-4470)", "4X (24-4245)", "4X (24-4451)", "4X (24-4462)", "4X (24-4467)", "4X (24-4464)", "5X (25-14197)", "5X (25-14232)", "5X (25-14249)", "5X (25-14245)", "5X (25-14394)", "5X (25-14381)", "5X (25-14252)", "5X (25-14236)", "5X (25-14238)", "5X (25-14391)"];
 
     let selectedDevice = "";
@@ -76,33 +91,35 @@
         if (sessionStorage.getItem('isLoggedIn') === 'true') {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContent').style.display = 'block';
-            initForm();
+            initApp();
         }
     }
 
     function login() {
-        if (document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
+        const u = document.getElementById('user').value;
+        const p = document.getElementById('pass').value;
+        if (u === "admin" && p === "1234") {
             sessionStorage.setItem('isLoggedIn', 'true');
             checkAuth();
-        } else { alert("Hata!"); }
+        } else { alert("Hatalı Giriş!"); }
     }
 
-    function initForm() {
+    async function initApp() {
         const id = new URLSearchParams(window.location.search).get('cihaz');
         if (id !== null && devices[id]) {
             selectedDevice = devices[id];
             document.getElementById('deviceDisplay').innerText = selectedDevice;
-            checkServer();
+            checkServerStatus();
             loadPastLogs(selectedDevice);
         }
     }
 
-    async function checkServer() {
+    async function checkServerStatus() {
         try {
             const res = await fetch(GOOGLE_URL + "?action=read&device=test");
             if (res.ok) { 
                 document.getElementById('statusDot').className = "dot online";
-                document.getElementById('statusText').innerText = "Sunucuya Bağlı";
+                document.getElementById('statusText').innerText = "Sunucu Online";
             }
         } catch (e) { document.getElementById('statusText').innerText = "Bağlantı Yok"; }
     }
@@ -112,22 +129,29 @@
             const res = await fetch(GOOGLE_URL + "?action=read&device=" + encodeURIComponent(deviceName));
             const data = await res.json();
             const list = document.getElementById('deviceLogs');
+            if(!data || data.length === 0) {
+                list.innerHTML = '<p style="font-size:0.7rem; color:gray;">Henüz kayıt yok.</p>';
+                return;
+            }
             list.innerHTML = data.map(l => `
                 <div class="log-card">
                     <div><strong>${l.teknisyen}</strong><br><small>${l.sonuc}</small></div>
                     <div class="log-date">${l.tarih}<br>${l.saat}</div>
                 </div>
-            `).join('') || 'Kayıt yok.';
-        } catch(e) { }
+            `).join('');
+        } catch(e) { console.log("Hata:", e); }
     }
 
     async function submitForm() {
         const tech = document.getElementById('techName').value;
         const op = document.getElementById('actionDetail').value;
         const res = document.getElementById('workResult').value;
-        if(!tech || !op) return alert("Eksik bilgi!");
+        if(!tech || !op) return alert("Lütfen tüm alanları doldurun!");
 
-        document.getElementById('saveBtn').disabled = true;
+        const btn = document.getElementById('saveBtn');
+        btn.disabled = true;
+        document.getElementById('btnTxt').innerText = "GÖNDERİLİYOR...";
+
         const payload = {
             tarih: new Date().toLocaleDateString('tr-TR'),
             saat: new Date().toLocaleTimeString('tr-TR', {hour:'2-digit', minute:'2-digit'}),
@@ -140,10 +164,11 @@
             setTimeout(() => {
                 document.getElementById('msg').style.display = "none";
                 document.getElementById('actionDetail').value = "";
-                document.getElementById('saveBtn').disabled = false;
+                btn.disabled = false;
+                document.getElementById('btnTxt').innerText = "KAYDET VE GÖNDER";
                 loadPastLogs(selectedDevice);
             }, 2000);
-        } catch (e) { alert("Hata!"); }
+        } catch (e) { alert("Bağlantı Hatası!"); btn.disabled = false; }
     }
 </script>
 </body>
