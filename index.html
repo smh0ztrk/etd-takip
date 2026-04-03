@@ -11,14 +11,14 @@
         
         /* Giriş Ekranı */
         #loginScreen { position: fixed; inset: 0; background: var(--sidebar); z-index: 9999; display: none; flex-direction: column; align-items: center; justify-content: center; color: white; }
-        .login-box { background: white; padding: 40px 30px; border-radius: 24px; width: 300px; text-align: center; color: var(--sidebar); box-shadow: 0 20px 50px rgba(0,0,0,0.4); }
-        .login-box .etd-logo { font-size: 60px; color: var(--primary); margin-bottom: 15px; }
-        .login-box h2 { margin: 0 0 25px 0; font-size: 1.4rem; font-weight: 800; color: var(--sidebar); letter-spacing: -0.5px; }
-        .login-box input { width: 100%; padding: 14px; margin-bottom: 15px; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; }
+        .login-box { background: white; padding: 50px 30px; border-radius: 28px; width: 320px; text-align: center; color: var(--sidebar); box-shadow: 0 25px 60px rgba(0,0,0,0.5); }
+        .login-box .etd-logo { font-size: 70px; color: var(--primary); margin-bottom: 20px; }
+        .login-box h2 { margin: 0 0 30px 0; font-size: 1.5rem; font-weight: 800; color: var(--sidebar); letter-spacing: -0.5px; }
+        .login-box input { width: 100%; padding: 16px; margin-bottom: 18px; border: 2px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; font-size: 1rem; outline: none; transition: 0.3s; font-family: inherit; }
         .login-box input:focus { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(8, 145, 178, 0.1); }
 
         /* Başarı Ekranı */
-        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.95); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
+        #successOverlay { display: none; position: fixed; inset: 0; background: rgba(15, 23, 42, 0.98); z-index: 1000; flex-direction: column; align-items: center; justify-content: center; color: white; text-align: center; }
 
         /* Header & Status */
         .header { background: var(--sidebar); color: white; padding: 30px 15px; text-align: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: relative; border-bottom: 4px solid var(--primary); }
@@ -26,26 +26,26 @@
         .status-bar { font-size: 0.75rem; margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 600; color: #94a3b8; }
         .dot { width: 8px; height: 8px; border-radius: 50%; background: #475569; }
         .online { background: var(--success); box-shadow: 0 0 10px var(--success); }
-        .device-badge { background: var(--primary); color: white; padding: 6px 18px; border-radius: 20px; font-weight: 800; margin-top: 15px; display: inline-block; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(8, 145, 178, 0.3); }
+        .device-badge { background: var(--primary); color: white; padding: 7px 20px; border-radius: 20px; font-weight: 800; margin-top: 15px; display: inline-block; font-size: 0.95rem; box-shadow: 0 4px 10px rgba(8, 145, 178, 0.3); letter-spacing: 0.5px; }
 
-        .main { max-width: 500px; margin: 20px auto; width: 92%; }
-        .card { background: white; padding: 25px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; }
+        .main { max-width: 500px; margin: 25px auto; width: 92%; }
+        .card { background: white; padding: 28px; border-radius: 24px; box-shadow: 0 15px 35px rgba(0,0,0,0.06); border: 1px solid #e2e8f0; }
         
-        input, textarea, select { width: 100%; padding: 14px; margin: 10px 0 20px 0; border: 2px solid #e2e8f0; border-radius: 12px; box-sizing: border-box; outline: none; font-size: 1rem; font-family: inherit; transition: 0.3s; }
-        input:focus, textarea:focus, select:focus { border-color: var(--primary); }
-        label { font-weight: 800; font-size: 0.75rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; }
+        input, textarea, select { width: 100%; padding: 16px; margin: 12px 0 24px 0; border: 2px solid #e2e8f0; border-radius: 14px; box-sizing: border-box; outline: none; font-size: 1rem; font-family: inherit; transition: 0.3s; background-color: white; color: #1e293b; }
+        input:focus, textarea:focus, select:focus { border-color: var(--primary); background-color: #fdfefe; }
+        label { font-weight: 800; font-size: 0.8rem; color: #64748b; text-transform: uppercase; letter-spacing: 1px; }
 
-        button { width: 100%; background: var(--primary); color: white; border: none; padding: 18px; border-radius: 15px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(8, 145, 178, 0.2); }
+        button { width: 100%; background: var(--primary); color: white; border: none; padding: 19px; border-radius: 16px; font-weight: bold; font-size: 1.1rem; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 5px 15px rgba(8, 145, 178, 0.25); letter-spacing: 0.5px; }
         button:active { transform: scale(0.97); }
         button.sending { background: var(--success) !important; }
 
         /* Geçmiş Kayıtlar */
-        .log-item { background: white; padding: 18px; border-radius: 18px; margin-bottom: 12px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02); }
-        .log-info strong { display: block; font-size: 1rem; color: var(--sidebar); }
-        .log-info span { font-size: 0.85rem; color: #64748b; font-weight: 500; }
-        .log-time { text-align: right; min-width: 80px; }
-        .log-time .d { font-weight: 800; font-size: 0.8rem; color: var(--sidebar); display: block; }
-        .log-time .t { font-size: 0.75rem; color: #94a3b8; font-weight: 600; }
+        .log-item { background: white; padding: 20px; border-radius: 20px; margin-bottom: 14px; border-left: 6px solid var(--primary); display: flex; justify-content: space-between; align-items: center; box-shadow: 0 5px 10px rgba(0,0,0,0.03); border-right: 1px solid #f1f5f9; border-top: 1px solid #f1f5f9; border-bottom: 1px solid #f1f5f9; }
+        .log-info strong { display: block; font-size: 1.05rem; color: var(--sidebar); margin-bottom: 3px; }
+        .log-info span { font-size: 0.9rem; color: #64748b; font-weight: 500; }
+        .log-time { text-align: right; min-width: 90px; }
+        .log-time .d { font-weight: 800; font-size: 0.85rem; color: var(--sidebar); display: block; margin-bottom: 2px; }
+        .log-time .t { font-size: 0.8rem; color: #94a3b8; font-weight: 600; }
     </style>
 </head>
 <body onload="checkAuth()">
@@ -62,19 +62,19 @@
 
 <div id="successOverlay">
     <span class="material-icons-round" style="font-size: 90px; color: var(--success);">check_circle</span>
-    <h2 style="margin-top:20px; font-weight: 900;">İŞLEM BAŞARILI!</h2>
-    <p style="color: #94a3b8;">Kayıt güvenli bir şekilde aktarıldı.</p>
+    <h2 style="margin-top:25px; font-weight: 900; font-size: 1.8rem;">İŞLEM BAŞARILI!</h2>
+    <p style="color: #94a3b8; font-size: 1.1rem;">Kayıt güvenli bir şekilde aktarıldı.</p>
 </div>
 
 <div id="appContent" style="display:none;">
     <div class="header">
         <span class="material-icons-round header-icon">biotech</span>
-        <div style="letter-spacing: 1.5px; font-weight: 900; text-transform: uppercase; font-size: 1.1rem;">CİHAZ BAKIM & TAKİP</div>
+        <div style="letter-spacing: 1.5px; font-weight: 900; text-transform: uppercase; font-size: 1.15rem;">CİHAZ BAKIM & TAKİP</div>
         <div class="status-bar">
             <div id="sDot" class="dot"></div>
-            <span id="sText">Bağlantı Kuruluyor...</span>
+            <span id="sText">Sistem Kontrol Ediliyor...</span>
         </div>
-        <div id="devName" class="device-badge">Cihaz Tanımlanıyor...</div>
+        <div id="devName" class="device-badge">Cihaz Aranıyor...</div>
     </div>
 
     <div class="main">
@@ -88,21 +88,10 @@
             <label>Servis Sonucu</label>
             <select id="res">
                 <option>Faal / Arıza Giderildi</option>
-                <option>Parça Bekliyor / Arızalı</option>
                 <option>İç Kalibrasyon Yapıldı</option>
-                <option>Dış Kalibrasyon Yapıldı</option>
-                <option>4x Dopant Değişimi Yapıldı</option>
-                <option>5x Dopant Değişimi Yapıldı</option>
                 <option>4x Lamba Değişimi Yapıldı</option>
                 <option>5x Lamba Değişimi Yapıldı</option>
-                <option>4x İnlet Filtre Değişimi Yapıldı</option>
-                <option>5x İnlet Filtre Değişimi Yapıldı</option>
-                <option>4x Çelik Filtre Değişimi Yapıldı</option>
-                <option>5x Çelik Filtre Değişimi Yapıldı</option>
-                <option>4x Çelik Filtre ve Lamba Değişimi Yapıldı</option>
-                <option>5x Çelik Filtre ve Lamba Değişimi Yapıldı</option>
-                <option>4x Çelik Filtre, Lamba ve İnlet Filtre Değişimi Yapıldı</option>
-                <option>5x Çelik Filtre, Lamba ve İnlet Filtre Değişimi Yapıldı</option>
+                <option>Parça Bekliyor / Arızalı</option>
             </select>
             
             <button onclick="sendData()" id="btn">
@@ -111,8 +100,8 @@
             </button>
         </div>
 
-        <p style="margin:35px 0 15px 0; font-weight: 900; font-size: 0.8rem; color: #64748b; display: flex; align-items: center; gap: 8px; text-transform: uppercase; letter-spacing: 1px;">
-            <span class="material-icons-round" style="font-size: 20px; color: var(--primary);">history</span>
+        <p style="margin:40px 0 18px 0; font-weight: 900; font-size: 0.85rem; color: #64748b; display: flex; align-items: center; gap: 10px; text-transform: uppercase; letter-spacing: 1.5px;">
+            <span class="material-icons-round" style="font-size: 22px; color: var(--primary);">history</span>
             Son Teknik Kayıtlar
         </p>
         <div id="logs"></div>
@@ -139,7 +128,7 @@
         if (document.getElementById('user').value === "admin" && document.getElementById('pass').value === "1234") {
             sessionStorage.setItem('isLoggedIn', 'true');
             checkAuth();
-        } else { alert("Yetkisiz Giriş!"); }
+        } else { alert("Yetkisiz Giriş Denemesi!"); }
     }
 
     async function initApp() {
@@ -177,7 +166,7 @@
                         <span class="t">${l.saat}</span>
                     </div>
                 </div>
-            `).join('') || '<p style="text-align:center; color:#94a3b8; font-size:0.9rem;">Henüz bir kayıt girilmemiş.</p>';
+            `).join('') || '<p style="text-align:center; color:#94a3b8; font-size:0.95rem; padding:20px;">Henüz bir teknik kayıt girilmemiş.</p>';
         } catch(e) {}
     }
 
@@ -185,7 +174,7 @@
         const t = document.getElementById('tech').value;
         const p = document.getElementById('proc').value;
         const r = document.getElementById('res').value;
-        if(!t || !p) return alert("Lütfen tüm alanları doldurun!");
+        if(!t || !p) return alert("Lütfen boş alan bırakmayın!");
 
         const btn = document.getElementById('btn');
         btn.classList.add('sending');
@@ -204,7 +193,7 @@
             document.getElementById('successOverlay').style.display = 'flex';
             setTimeout(() => { location.reload(); }, 2000);
         } catch(e) { 
-            alert("Aktarım Hatası!"); 
+            alert("Aktarım Hatası Oluştu!"); 
             btn.classList.remove('sending');
             btn.disabled = false;
         }
